@@ -1,2 +1,2 @@
 # BibleSearch
-An app to search the Bible for Amazon Echo
+An Amazon Echo app for searching the Bible
