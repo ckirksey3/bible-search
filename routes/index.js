@@ -23,7 +23,6 @@ exports.index = function(req, res) {
 
 	// respond back with the data
 	res.json(data);
-
 }
 
 /**
@@ -56,9 +55,6 @@ exports.getAll = function(req,res){
   	}	
 
   	res.json(jsonData);
-
-	})
-
 }
 
 /**
@@ -89,5 +85,4 @@ exports.update = function(req,res){
 exports.remove = function(req,res){
 
 	var requestedId = req.param('id');
-
 }

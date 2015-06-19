@@ -57,6 +57,6 @@ http.createServer(app).listen(app.get('port'), function(){
   console.log("Express server listening on port " + app.get('port'));
 });
 
-bibleApiInstance.getPassage('Luke', '1', '5', '8', function logResult(err, result) {
-	console.log(result)
-})
+// bibleApiInstance.getPassage('Luke', '1', '5', '8', function logResult(err, result) {
+// 	console.log(result)
+// })
