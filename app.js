@@ -38,6 +38,11 @@ app.all('*', function(req, res, next){
   next();
 });
 
+// ROUTES, logic is in routes/index.js
+
+var routes = require('./routes/index.js');
+
+
 // home route is not really an API route, but does respond back
 app.get('/', routes.index); // calls index function in /routes/index.js
 
