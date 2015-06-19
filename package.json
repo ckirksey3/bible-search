@@ -1,0 +1,13 @@
+{
+  "name": "bible-search",
+  "version": "0.0.1",
+  "dependencies": {
+    "body-parser": "^1.10.1",
+    "express": "^4.10.7",
+    "request": "^2.51.0"
+  },
+  "engines": {
+    "node": "0.8.x",
+    "npm": "2.2.x"
+  }
+}
