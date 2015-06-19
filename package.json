@@ -5,7 +5,8 @@
     "body-parser": "^1.10.1",
     "express": "^4.10.7",
     "method-override": "^2.3.1",
-    "request": "^2.51.0"
+    "request": "^2.51.0",
+    "unirest": "^0.4.2",
   },
   "engines": {
     "node": "0.8.x",
