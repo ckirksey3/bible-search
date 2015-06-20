@@ -47,8 +47,11 @@ var routes = require('./routes/index.js');
 
 //Specify some intents
 var testApp = new alexa.app('BibleSearch');
-testApp.launch(function(req,res) {
-	res.say("Hello World!");
+// testApp.launch(function(req,res,) {
+// 	res.say("Hello World!");
+// });
+testApp.launch(function(request,response,http_req,http_res) {
+    log( http_req.ip );
 });
 
 //Attach Alexa apps to express
