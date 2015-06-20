@@ -7,9 +7,12 @@ var http = require('http')
 var path = require('path')
 var bodyParser = require('body-parser')
 var methodOverride = require('method-override')
+var alexa = require('alexa-app')
 
 var bibleApi = require('./bible_api.js')
 var bibleApiInstance = new bibleApi()
+
+var appId = 'amzn1.echo-sdk-ams.app.7f03e034-0a89-447c-88e7-6b5caabb2dd9'
 
 // the ExpressJS App
 var app = express()
@@ -41,6 +44,15 @@ app.all('*', function(req, res, next){
 // ROUTES, logic is in routes/index.js
 
 var routes = require('./routes/index.js');
+
+//Specify some intents
+var testApp = new alexa.app('BibleSearch');
+testApp.launch(function(req,res) {
+	res.say("Hello World!");
+});
+
+//Attach Alexa apps to express
+alexa.bootstrap(app,'/');
 
 
 // home route is not really an API route, but does respond back
