@@ -46,7 +46,7 @@ echoApp.on(echoApp.TYPE_LAUNCH_REQUEST, function(callback, userId, sessionInfo, 
 
 echoApp.on(echoApp.TYPE_INTENT_REQUEST, function(callback, userId, sessionInfo, userObject, intent){
     if(intent.name === 'Bible'){
-        if(intent.schema.slots) {
+        if(intent.slots) {
           var book = 'John';
           var chapter = 3;
           var verse = 16;
