@@ -29,8 +29,8 @@ app.set('port', (process.env.PORT || 5000));
 app.use(express.static(__dirname + '/public'));
 
 
-var echoApp = new AmazonEchoApp(client, "hello-world", "shhhhhhhhhhhh!");
-echoApp.decorateAppWithRoutes('/hello-world', app);
+var echoApp = new AmazonEchoApp(client, "bible-search", appId);
+echoApp.decorateAppWithRoutes('/', app);
 
 echoApp.on(echoApp.TYPE_LAUNCH_REQUEST, function(callback, userId, sessionInfo, userObject){
     var shouldEndSession = false;
