@@ -2,76 +2,87 @@
  * Module dependencies.
  */
 
-var express = require('express')
-var http = require('http')
-var path = require('path')
-var bodyParser = require('body-parser')
-var methodOverride = require('method-override')
-var alexa = require('alexa-app')
-
 var bibleApi = require('./bible_api.js')
 var bibleApiInstance = new bibleApi()
 
 var appId = 'amzn1.echo-sdk-ams.app.7f03e034-0a89-447c-88e7-6b5caabb2dd9'
 
-// the ExpressJS App
-var app = express()
-
-// configuration of expressjs settings for the web server.
-
-// server port number
-app.set('port', process.env.PORT || 5000);
-
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(methodOverride());
-
-/**
- * CORS support for AJAX requests
- */
-
-app.all('*', function(req, res, next){
-  if (!req.get('Origin')) return next();
-  // use "*" here to accept any origin
-  res.set('Access-Control-Allow-Origin', '*');
-  res.set('Access-Control-Allow-Methods', 'PUT');
-  res.set('Access-Control-Allow-Headers', 'X-Requested-With, Content-Type');
-  // res.set('Access-Control-Allow-Max-Age', 3600);
-  if ('OPTIONS' == req.method) return res.send(200);
-  next();
-});
-
-// ROUTES, logic is in routes/index.js
-
-var routes = require('./routes/index.js');
-
-//Specify some intents
-var testApp = new alexa.app('BibleSearch');
-// testApp.launch(function(req,res,) {
-// 	res.say("Hello World!");
-// });
-testApp.launch(function(request,response,http_req,http_res) {
-    log( http_req.ip );
-});
-
-//Attach Alexa apps to express
-alexa.bootstrap(app,'/');
-
-
-// // home route is not really an API route, but does respond back
-// app.get('/', routes.index); // calls index function in /routes/index.js
-
-// // API routes
-// app.post('/api/create', routes.create); // API create route and callback (see /routes/index.js)
-// app.get('/api/get', routes.getAll); // API retrieve all route and callback (see /routes/index.js)
-// app.post('/api/update/:id', routes.update); // API update route and callback (see /routes/index.js)
-// app.get('/api/delete/:id', routes.remove); // API delete route and callback (see /routes/index.js)
-
-// create NodeJS HTTP server using 'app'
-http.createServer(app).listen(app.get('port'), function(){
-  console.log("Express server listening on port " + app.get('port'));
-});
-
 // bibleApiInstance.getPassage('Luke', '1', '5', '8', function logResult(err, result) {
 // 	console.log(result)
 // })
+
+//NEW
+var express = require('express');
+var app = express();
+var bodyParser = require('body-parser');
+var AmazonEchoApp = require('node-alexa');
+var redis = require('redis');
+var url = require('url');
+var redisURL = url.parse(process.env.REDISCLOUD_URL); //Heroku Redis
+var client = redis.createClient(redisURL.port, redisURL.hostname, {no_ready_check: true});
+client.auth(redisURL.auth.split(":")[1]);
+
+
+app.use(bodyParser.json()); // for parsing application/json
+app.use(bodyParser.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded
+app.set('port', (process.env.PORT || 5000));
+app.use(express.static(__dirname + '/public'));
+
+
+var echoApp = new AmazonEchoApp(client, "hello-world", "shhhhhhhhhhhh!");
+echoApp.decorateAppWithRoutes('/hello-world', app);
+
+echoApp.on(echoApp.TYPE_LAUNCH_REQUEST, function(callback, userId, sessionInfo, userObject){
+    var shouldEndSession = false;
+    var speechText = "I'm Alive.";
+    var cardTitle = "Hello World";
+    var cardSubtitle = "userId " + userId;
+    var cardContents = "Hello Echo Iphone App";
+    var sessionObject = false;
+    if(!userObject){
+        //no long term persistance for this use
+    }
+    else{
+        //this user has a long term storage session 
+    }
+    callback(shouldEndSession, speechText, cardTitle, cardSubtitle, cardContents, sessionObject);
+});
+
+echoApp.on(echoApp.TYPE_INTENT_REQUEST, function(callback, userId, sessionInfo, userObject, intent){
+    if(intent.name === 'Bible'){
+        var shouldEndSession = true;
+        var speechText = "I heard the command " + intent.name;
+        var cardTitle = "Test Echo App Launch Request";
+        var cardSubtitle = "userId " + userId;
+        var cardContents = "sessionInfo = "+ JSON.stringify(sessionInfo);
+        var sessionObject = false;
+        callback(shouldEndSession, speechText, cardTitle, cardSubtitle, cardContents, sessionObject);
+        return;
+    }
+    echoApp.returnErrorResponse(callback, "Sorry, nobody has implemented the command "+intent.name);
+    return;
+
+});
+
+echoApp.on(echoApp.TYPE_WEB_USER_DISPLAY, function(callback, userId, command, userObject){
+    //This route is called when a user is directed to:
+    // https://myurl.com/approute/input/"+userId;
+    html = '<h1>Hello World</h1>';  
+    callback(html);
+});
+
+echoApp.on(echoApp.TYPE_WEB_USER_INPUT, function(callback, userId, command, inputObj, userObject){
+    //This route is called when data is posted to:
+    // https://myurl.com/approute/input/"+userId;
+
+    var message = "Got posted data.";
+    //for example, if you collect username and password for a third party integration
+    userObject = {email: inputObj.email,password: inputObj.password};
+    callback(message, userObject);
+    //user object will now be encrypted and stored in redis. It will automatically be decrypted and passed into to future events invoked by this user   
+});
+
+
+app.listen(app.get('port'), function() {
+    console.log("Node app is running at localhost:" + app.get('port'));
+});
