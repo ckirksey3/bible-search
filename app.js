@@ -34,10 +34,10 @@ echoApp.decorateAppWithRoutes('/', app);
 
 echoApp.on(echoApp.TYPE_LAUNCH_REQUEST, function(callback, userId, sessionInfo, userObject){
     var shouldEndSession = false;
-    var speechText = "I'm Alive.";
-    var cardTitle = "Hello World";
+    var speechText = "Welcome to the Bible App";
+    var cardTitle = "Bible App Launched";
     var cardSubtitle = "userId " + userId;
-    var cardContents = "Hello Echo Iphone App";
+    var cardContents = "Try a new command like 'Alexa, ask the Bible for the verse of the day'";
     var sessionObject = false;
     if(!userObject){
         //no long term persistance for this use
