@@ -7,10 +7,6 @@ var bibleApiInstance = new bibleApi()
 
 var appId = 'amzn1.echo-sdk-ams.app.7f03e034-0a89-447c-88e7-6b5caabb2dd9'
 
-// bibleApiInstance.getPassage('Luke', '1', '5', '8', function logResult(err, result) {
-// 	console.log(result)
-// })
-
 //NEW
 var express = require('express');
 var app = express();
@@ -50,6 +46,22 @@ echoApp.on(echoApp.TYPE_LAUNCH_REQUEST, function(callback, userId, sessionInfo, 
 
 echoApp.on(echoApp.TYPE_INTENT_REQUEST, function(callback, userId, sessionInfo, userObject, intent){
     if(intent.name === 'Bible'){
+        if(intent.schema.slots) {
+          var book = 'John';
+          var chapter = 3;
+          var verse = 16;
+          bibleApiInstance.getPassage(book, chapter, verse, verse, function logResult(err, result) {
+           console.log(result)
+           var shouldEndSession = true;
+            var speechText = "Here is your verse " + result;
+            var cardTitle = "Bible Verse Requested: " + book + " " + chapter + ":" + verse;
+            var cardSubtitle = "userId " + userId;
+            var cardContents = result;
+            var sessionObject = false;
+            callback(shouldEndSession, speechText, cardTitle, cardSubtitle, cardContents, sessionObject);
+            return;
+          })
+        }
         var shouldEndSession = true;
         var speechText = "I heard the command " + intent.name;
         var cardTitle = "Test Echo App Launch Request";
