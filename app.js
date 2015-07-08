@@ -47,9 +47,9 @@ echoApp.on(echoApp.TYPE_LAUNCH_REQUEST, function(callback, userId, sessionInfo, 
 echoApp.on(echoApp.TYPE_INTENT_REQUEST, function(callback, userId, sessionInfo, userObject, intent){
     if(intent.name === 'Bible'){
         if(intent.slots) {
-          var book = 'John';
-          var chapter = 3;
-          var verse = 16;
+          var book = intent.slots['Book'];
+          var chapter = intent.slots['Chapter'];
+          var verse = intent.slots['Verse'];
           bibleApiInstance.getPassage(book, chapter, verse, verse, function logResult(err, result) {
            console.log(result)
            var shouldEndSession = true;
