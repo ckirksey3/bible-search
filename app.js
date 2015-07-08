@@ -62,10 +62,10 @@ echoApp.on(echoApp.TYPE_INTENT_REQUEST, function(callback, userId, sessionInfo, 
             return;
           })
         }
+    } else {
+      echoApp.returnErrorResponse(callback, "Sorry, nobody has implemented the command "+intent.name);
+      return;
     }
-    echoApp.returnErrorResponse(callback, "Sorry, nobody has implemented the command "+intent.name);
-    return;
-
 });
 
 echoApp.on(echoApp.TYPE_WEB_USER_DISPLAY, function(callback, userId, command, userObject){
