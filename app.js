@@ -14,6 +14,7 @@ var bodyParser = require('body-parser');
 var AmazonEchoApp = require('node-alexa');
 var redis = require('redis');
 var url = require('url');
+var util = require('util');
 var redisURL = url.parse(process.env.REDISCLOUD_URL); //Heroku Redis
 var client = redis.createClient(redisURL.port, redisURL.hostname, {no_ready_check: true});
 client.auth(redisURL.auth.split(":")[1]);
@@ -47,13 +48,16 @@ echoApp.on(echoApp.TYPE_LAUNCH_REQUEST, function(callback, userId, sessionInfo, 
 echoApp.on(echoApp.TYPE_INTENT_REQUEST, function(callback, userId, sessionInfo, userObject, intent){
     if(intent.name === 'Bible'){
         if(intent.slots) {
-          var book = intent.slots['Book'];
-          var chapter = intent.slots['Chapter'];
-          var verse = intent.slots['Verse'];
+          console.log("FULL INTENT: " + util.inspect(intent, false, null));
+          console.log("SLOTS: " + util.inspect(intent.slots, false, null));
+          console.log("BOOK: " + util.inspect(intent.slots['Book'], false, null));
+          var book = intent.slots['Book'].value;
+          var chapter = intent.slots['Chapter'].value;
+          var verse = intent.slots['Verse'].value;
           bibleApiInstance.getPassage(book, chapter, verse, verse, function logResult(err, result) {
            console.log(result)
            var shouldEndSession = true;
-            var speechText = "Here is your verse " + result;
+            var speechText = book + chapter + verse + result;
             var cardTitle = "Bible Verse Requested: " + book + " " + chapter + ":" + verse;
             var cardSubtitle = "userId " + userId;
             var cardContents = result;
