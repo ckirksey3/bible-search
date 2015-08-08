@@ -55,6 +55,9 @@ echoApp.on(echoApp.TYPE_INTENT_REQUEST, function(callback, userId, sessionInfo, 
           var chapter = intent.slots['Chapter'].value;
           var startVerse = intent.slots['StartVerse'].value;
           var endVerse = intent.slots['EndVerse'].value;
+          if(!endVerse) {
+            endVerse = startVerse;
+          }
           bibleApiInstance.getPassage(book, chapter, startVerse, endVerse, function logResult(err, result) {
            console.log(result)
            var shouldEndSession = true;
