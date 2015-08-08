@@ -45,19 +45,41 @@ echoApp.on(echoApp.TYPE_LAUNCH_REQUEST, function(callback, userId, sessionInfo, 
     callback(shouldEndSession, speechText, cardTitle, cardSubtitle, cardContents, sessionObject);
 });
 
+function handleError(errorText, callback, sessionObject) {
+  console.log("Error: " + errorText);
+  callback(shouldEndSession, errorText, "Error", errorText, "", sessionObject);
+}
+
 echoApp.on(echoApp.TYPE_INTENT_REQUEST, function(callback, userId, sessionInfo, userObject, intent){
     if(intent.name === 'Bible'){
         if(intent.slots) {
           console.log("FULL INTENT: " + util.inspect(intent, false, null));
           console.log("SLOTS: " + util.inspect(intent.slots, false, null));
           console.log("BOOK: " + util.inspect(intent.slots['Book'], false, null));
-          var book = intent.slots['Book'].value;
-          var chapter = intent.slots['Chapter'].value;
-          var startVerse = intent.slots['StartVerse'].value;
-          var endVerse = intent.slots['EndVerse'].value;
-          if(!endVerse) {
-            endVerse = startVerse;
+          var book, chapter, startVerse, endVerse;
+          book = intent.slots['Book'].value;
+          if(book) {
+            chapter = intent.slots['Chapter'].value;
+            if(chapter) {
+              startVerse = intent.slots['StartVerse'].value;
+              if(startVerse) {
+                endVerse = intent.slots['EndVerse'].value;
+                if(!endVerse) {
+                  endVerse = startVerse;
+                }
+              } else {
+                startVerse = 1;
+                endVerse = null;
+              }
+            } else {
+              handleError("Must specify which chapter in " + book, callback, sessionObject);
+            }
+          } else {
+            handleError("Must specify a book of the Bible", callback, sessionObject);
           }
+          
+          
+          
           bibleApiInstance.getPassage(book, chapter, startVerse, endVerse, function logResult(err, result) {
            console.log(result)
            var shouldEndSession = true;
