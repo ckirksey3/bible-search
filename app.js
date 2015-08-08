@@ -53,16 +53,24 @@ echoApp.on(echoApp.TYPE_INTENT_REQUEST, function(callback, userId, sessionInfo, 
           console.log("BOOK: " + util.inspect(intent.slots['Book'], false, null));
           var book = intent.slots['Book'].value;
           var chapter = intent.slots['Chapter'].value;
-          var verse = intent.slots['Verse'].value;
-          bibleApiInstance.getPassage(book, chapter, verse, verse, function logResult(err, result) {
+          var startVerse = intent.slots['StartVerse'].value;
+          var endVerse = intent.slots['EndVerse'].value;
+          bibleApiInstance.getPassage(book, chapter, startVerse, endVerse, function logResult(err, result) {
            console.log(result)
            var shouldEndSession = true;
-            var speechText = book + chapter + verse + result;
-            var cardTitle = "Bible Verse Requested: " + book + " " + chapter + ":" + verse;
-            var cardSubtitle = "userId " + userId;
+           var cardSubtitle = "userId " + userId;
             var cardContents = result;
             var sessionObject = false;
-            callback(shouldEndSession, speechText, cardTitle, cardSubtitle, cardContents, sessionObject);
+
+            if(endVerse) {
+              var speechText = book + chapter + startVerse + " through " + endVerse + result;
+              var cardTitle = "Bible Verse Requested: " + book + " " + chapter + ":" + startVerse + "-" + endVerse;
+              callback(shouldEndSession, speechText, cardTitle, cardSubtitle, cardContents, sessionObject);
+            } else {
+              var speechText = book + chapter + startVerse + result;
+              var cardTitle = "Bible Verse Requested: " + book + " " + chapter + ":" + startVerse;
+              callback(shouldEndSession, speechText, cardTitle, cardSubtitle, cardContents, sessionObject);
+            }
             return;
           })
         }

@@ -33,13 +33,27 @@ Bible.prototype.getPassage = function (book, chapter, startVerse, endVerse, call
 Bible.testGetPassage = function(test){
 	//Mock makeBibleGetRequest
 	Bible.prototype.makeBibleGetRequest = function (method, parameters, callback) {
-		var result = { body: { Output: "1 Jesus wept" } };
+		var result = { body: { Output: "35 Jesus wept" } };
 		callback(null, result)
 	}
 
 	Bible.prototype.getPassage("John", 11, 35, 35, function logResult(err, result) {
 	   	test.equal(err, null, "Request for verse errored");
 	   	test.equal(result, " Jesus wept", "Correct verse was not returned");  
+    	test.done();
+	})
+};
+
+Bible.testGetMultipleVerses = function(test){
+	//Mock makeBibleGetRequest
+	Bible.prototype.makeBibleGetRequest = function (method, parameters, callback) {
+		var result = { body: { Output: "35 Jesus wept. 36 Then the Jews said, “See how he loved him!”" } };
+		callback(null, result)
+	}
+
+	Bible.prototype.getPassage("John", 11, 35, 35, function logResult(err, result) {
+	   	test.equal(err, null, "Request for verse errored");
+	   	test.equal(result, " Jesus wept.  Then the Jews said, “See how he loved him!”", "Correct verse was not returned");  
     	test.done();
 	})
 };
