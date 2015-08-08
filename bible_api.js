@@ -26,6 +26,9 @@ Bible.prototype.getPassage = function (book, chapter, startVerse, endVerse, call
 		console.log("getPass returned")
 		//remove verse numbers
 		var bibleText = result.body.Output.replace(/[0-9]/g, '');
+		if(bibleText == "Wrong slection!!! Please try again.") {
+			bibleText = "Either I misheard you or that passage does not exist."
+		}
 		callback(null, bibleText)
 	})
 }
