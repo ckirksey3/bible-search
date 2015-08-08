@@ -34,7 +34,7 @@ echoApp.on(echoApp.TYPE_LAUNCH_REQUEST, function(callback, userId, sessionInfo, 
     var speechText = "Welcome to the Bible App";
     var cardTitle = "Bible App Launched";
     var cardSubtitle = "userId " + userId;
-    var cardContents = "Try a new command like 'Alexa, ask the Bible for the verse of the day'";
+    var cardContents = "Try a new command like 'Alexa, ask the Bible what Genesis 1:3 is'";
     var sessionObject = false;
     if(!userObject){
         //no long term persistance for this use
