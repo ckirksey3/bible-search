@@ -24,8 +24,24 @@ Bible.prototype.getPassage = function (book, chapter, startVerse, endVerse, call
 	}
 	this.makeBibleGetRequest("GetFromTwoVerses", parameters, function parseResponse(error, result) {
 		console.log("getPass returned")
-		callback(null, result.body.Output)
+		//remove verse numbers
+		var bibleText = result.body.Output.replace(/[0-9]/g, '');
+		callback(null, bibleText)
 	})
 }
+
+Bible.testGetPassage = function(test){
+	//Mock makeBibleGetRequest
+	Bible.prototype.makeBibleGetRequest = function (method, parameters, callback) {
+		var result = { body: { Output: "1 Jesus wept" } };
+		callback(null, result)
+	}
+
+	Bible.prototype.getPassage("John", 11, 35, 35, function logResult(err, result) {
+	   	test.equal(err, null, "Request for verse errored");
+	   	test.equal(result, " Jesus wept", "Correct verse was not returned");  
+    	test.done();
+	})
+};
 
 module.exports = Bible
